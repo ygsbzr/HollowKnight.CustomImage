@@ -1,172 +1,135 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
-using Modding;
-using UnityEngine;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using System.IO;
-namespace CustomImage
-{
-    public class CustomImage:Mod,ITogglableMod
-    {
-        Dictionary<string, Sprite> customobjects = new Dictionary<string, Sprite>();
-        Dictionary<string, Texture2D> customspirte = new Dictionary<string, Texture2D>();
-        static string DATA_DIR = Path.GetDirectoryName(Assembly.GetCallingAssembly().Location) + "/Mods";
-        static string objectfolder = "CustomImage";
-        static string objectpath = Path.Combine(DATA_DIR, objectfolder);
-        static string textname = "Objectlist.txt";
-        static string textpath = Path.Combine(objectpath, textname);
-        FileStream newfile = null;
-        StreamWriter writer;
-        string[] files;
-        
+using System.Linq;
+using System.Reflection;
 
-        
-        private Sprite LoadSprite(string path)
-        {
-            byte[] texByte = File.ReadAllBytes(path);
-            Texture2D texture2D = new Texture2D(1, 1);
-            texture2D.LoadImage(texByte, true);
-            Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, (float)texture2D.width, (float)texture2D.height), new Vector2(0.5f, 0.5f));
-            return sprite;
-        }
-        public void Checkpath()
-        {
-            if(!Directory.Exists(objectpath))
-            {
-                Log("You have not the CustomImage Directory,now create one");
-                Directory.CreateDirectory(objectpath);
-            }
-           if(!File.Exists(textpath))
-            {
-                newfile = new FileStream(textpath, FileMode.CreateNew, FileAccess.Write);
-                writer = new StreamWriter(newfile);
-            }
-            else
-            {
-                writer = new StreamWriter(textpath, false);
-            }
-        }
-        private Texture2D LoadTex(string path)
-        {
-            byte[] texByte = File.ReadAllBytes(path);
-            Texture2D texture2D = new Texture2D(1, 1);
-            texture2D.LoadImage(texByte, true);
-            return texture2D;
-        }
-        public override void Initialize()
-        {
-            Checkpath();
-            files = Directory.GetFiles(objectpath, "*.png");
-            ModHooks.NewGameHook += Preload;
-            ModHooks.AfterSavegameLoadHook += Preload2;
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += Change;
-            ModHooks.SlashHitHook += this.Record;
-            ModHooks.BeforeSavegameSaveHook += CloseText;
-        }
+using Modding;
 
-        private void Record(UnityEngine.Collider2D otherCollider, GameObject slash)
-        {
-            writer.WriteLine("you hit "+otherCollider.gameObject.name);
-            
-        }
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-        private void CloseText(SaveGameData obj)
-        {
-            writer.Flush();
-            writer.Close();
-        }
+using USceneManager = UnityEngine.SceneManagement.SceneManager;
 
-        
+namespace CustomImage {
+	public class CustomImage : Mod, ITogglableMod {
+		public static CustomImage Instance { get; private set; }
 
-        public override string GetVersion()
-        {
-            return "1.5";
-        }
 
-        private void Preload2(SaveGameData obj)
-        {
-            Preload();
-        }
+		private readonly Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
 
-        private void Preload()
-        {
-            foreach(var file in files)
-            {
-                string filename = Path.GetFileNameWithoutExtension(file);
-                customobjects.Add(filename, LoadSprite(file));
-                customspirte.Add(filename, LoadTex(file));
-                Log("Preload " + filename);
-            }
-            Log("Preload done!");
-            ModHooks.ObjectPoolSpawnHook += ChangeSprite;
-            
-        }
+		private static readonly string assetPath = Path.Combine(
+			Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
+			"Mods",
+			"CustomImage"
+		);
 
-        private void Change(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.Scene arg1)
-        {
-            foreach (GameObject gameObject in UnityEngine.Object.FindObjectsOfType<GameObject>())
-            {
-               
-                foreach (var key in customobjects.Keys)
-                {
-                    
-                    if (gameObject.name.Contains(key))
-                    {
-                       if(gameObject.GetComponent<tk2dSprite>()!=null)
-                        {
-                            gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture = customobjects[key].texture;
-                        }
-                        else
-                        {
-                            Sprite sprite = gameObject.GetComponent<SpriteRenderer>().sprite;
-                            Sprite newsp = Sprite.Create(customspirte[key], new Rect(0f, 0f, (float)customspirte[key].width, (float)customspirte[key].height), new Vector2(0.5f, 0.5f), sprite.pixelsPerUnit);
-                            gameObject.GetComponent<SpriteRenderer>().sprite = newsp;
-                        
-                        }
-                        Log("Change" + gameObject.name + " Sprite by scene");
-                        break;
-                    }
-                }
-            }
-        }
-        
+		private FileStream logFile;
+		private StreamWriter logWriter;
 
-        private GameObject ChangeSprite(GameObject arg)
-        {
-            foreach(var key in customobjects.Keys)
-            {
-                if(arg.name.Contains(key))
-                {
-                    if (arg.GetComponent<tk2dSprite>() != null)
-                    {
-                        arg.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture = customobjects[key].texture;
-                    }
-                    else
-                    {
-                        Sprite sprite = arg.GetComponent<SpriteRenderer>().sprite;
-                        Sprite newsp = Sprite.Create(customspirte[key], new Rect(0f, 0f, (float)customspirte[key].width, (float)customspirte[key].height), new Vector2(0.5f, 0.5f), sprite.pixelsPerUnit);
-                        arg.GetComponent<SpriteRenderer>().sprite = newsp;
-                    }
 
-                    Log("Change" + arg.name + " Sprite");
-                    break;
-                }
-            }
-            return arg;
-        }
-        public void Unload()
-        {
-            ModHooks.NewGameHook -= Preload;
-            ModHooks.AfterSavegameLoadHook -= Preload2;
-            ModHooks.ObjectPoolSpawnHook -= ChangeSprite;
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= Change;
-            ModHooks.SlashHitHook -= this.Record;
-            ModHooks.BeforeSavegameSaveHook -= CloseText;
+		public override string GetVersion() => "1.5";
 
-        }
-    }
+		public override void Initialize() {
+			if (Instance != null) {
+				return;
+			}
+
+			Instance = this;
+
+
+			if (!Directory.Exists(assetPath)) {
+				LogDebug("The CustomImage folder does not exist, creating");
+				Directory.CreateDirectory(assetPath);
+			}
+
+			logFile = new FileStream(
+				Path.Combine(assetPath, "Objectlist.txt"),
+				FileMode.Create,
+				FileAccess.Write
+			);
+			logWriter = new StreamWriter(logFile);
+
+
+			ModHooks.NewGameHook += LoadAsset;
+			ModHooks.AfterSavegameLoadHook += LoadAsset2;
+
+			USceneManager.activeSceneChanged += ChangeSpriteInScene;
+			ModHooks.ObjectPoolSpawnHook += ChangeSprite;
+
+			ModHooks.SlashHitHook += RecordGO;
+		}
+
+		public void Unload() {
+			ModHooks.NewGameHook -= LoadAsset;
+			ModHooks.AfterSavegameLoadHook -= LoadAsset2;
+
+			USceneManager.activeSceneChanged -= ChangeSpriteInScene;
+			ModHooks.ObjectPoolSpawnHook -= ChangeSprite;
+
+			ModHooks.SlashHitHook -= RecordGO;
+
+			logFile.Close();
+			logWriter.Close();
+
+			logFile = null;
+			logWriter = null;
+
+			Instance = null;
+		}
+
+		private Texture2D LoadTexture2D(string path) {
+			var texture2D = new Texture2D(1, 1);
+			texture2D.LoadImage(File.ReadAllBytes(path), true);
+			return texture2D;
+		}
+
+		private void LoadAsset() {
+			foreach (string file in Directory.GetFiles(assetPath, "*.png")) {
+				string filename = Path.GetFileNameWithoutExtension(file);
+				textureDict.Add(filename, LoadTexture2D(file));
+
+				LogDebug("Loaded " + filename);
+			}
+
+			Log("Asset loading done!");
+		}
+
+		private void LoadAsset2(SaveGameData _) => LoadAsset();
+
+		private GameObject ChangeSprite(GameObject go) {
+			Texture2D texture = textureDict
+				.Where(pair => go.name.Contains(pair.Key))
+				.FirstOrDefault()
+				.Value;
+
+			if (texture != null) {
+				tk2dSprite tkSprite = go.GetComponent<tk2dSprite>();
+				if (tkSprite != null) {
+					tkSprite.GetCurrentSpriteDef().material.mainTexture = texture;
+				} else {
+					SpriteRenderer renderer = go.GetComponent<SpriteRenderer>();
+
+					if (renderer != null) {
+						renderer.sprite = MakeSprite(texture, renderer.sprite.pixelsPerUnit);
+					}
+				}
+
+				LogDebug($"Changed {go.name} Sprite in scene {go.scene.name}");
+			}
+
+			return go;
+		}
+
+		private void ChangeSpriteInScene(Scene prev, Scene next) {
+			foreach (GameObject go in Object.FindObjectsOfType<GameObject>()) {
+				ChangeSprite(go);
+			}
+		}
+
+		private Sprite MakeSprite(Texture2D tex, float ppu) =>
+			Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), ppu);
+
+		private void RecordGO(Collider2D collider, GameObject _) =>
+			logWriter.WriteLine("Hit " + collider.gameObject.name);
+	}
 }
