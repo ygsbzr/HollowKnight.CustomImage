@@ -50,21 +50,24 @@ namespace CustomImage {
 			logWriter = new StreamWriter(logFile);
 
 
-			ModHooks.NewGameHook += LoadAsset;
-			ModHooks.AfterSavegameLoadHook += LoadAsset2;
-
+            On.HeroController.Start += Load;
 			USceneManager.activeSceneChanged += ChangeSpriteInScene;
 			ModHooks.ObjectPoolSpawnHook += ChangeSprite;
 
 			ModHooks.SlashHitHook += RecordGO;
 		}
 
-		public void Unload() {
-			ModHooks.NewGameHook -= LoadAsset;
-			ModHooks.AfterSavegameLoadHook -= LoadAsset2;
+        private void Load(On.HeroController.orig_Start orig, HeroController self)
+        {
+			LoadAsset();
+			orig(self);
+        }
+
+        public void Unload() {
 
 			USceneManager.activeSceneChanged -= ChangeSpriteInScene;
 			ModHooks.ObjectPoolSpawnHook -= ChangeSprite;
+			On.HeroController.Start -= Load;
 
 			ModHooks.SlashHitHook -= RecordGO;
 
@@ -86,7 +89,7 @@ namespace CustomImage {
 		private void LoadAsset() {
 			foreach (string file in Directory.GetFiles(assetPath, "*.png")) {
 				string filename = Path.GetFileNameWithoutExtension(file);
-				textureDict.Add(filename, LoadTexture2D(file));
+				textureDict[filename] = LoadTexture2D(file);
 
 				LogDebug("Loaded " + filename);
 			}
@@ -94,11 +97,10 @@ namespace CustomImage {
 			Log("Asset loading done!");
 		}
 
-		private void LoadAsset2(SaveGameData _) => LoadAsset();
 
 		private GameObject ChangeSprite(GameObject go) {
 			Texture2D texture = textureDict
-				.Where(pair => go.name.Contains(pair.Key))
+				.Where(pair => go.name.StartsWith(pair.Key))
 				.FirstOrDefault()
 				.Value;
 
