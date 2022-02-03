@@ -11,4 +11,5 @@ A Hollow Knight Mod can change some sprites(for1.5.78)
 6. Move the image files here and rename them according to `Objectlist.txt`(`<gamobjectname>.png`)
 7. Start the game
 8. if the sprite does not change ,please try to reenter the scene.
+9. for some altbossstatue(like Nosk Hornet),rename the image as `GG_Statue_<bossname>-alt.png`
 

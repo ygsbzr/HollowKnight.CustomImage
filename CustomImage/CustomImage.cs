@@ -53,9 +53,15 @@ namespace CustomImage {
             On.HeroController.Start += Load;
 			USceneManager.activeSceneChanged += ChangeSpriteInScene;
 			ModHooks.ObjectPoolSpawnHook += ChangeSprite;
-
+            ModHooks.BeforeSavegameSaveHook += CloseWriter;
 			ModHooks.SlashHitHook += RecordGO;
 		}
+
+        private void CloseWriter(SaveGameData obj)
+        {
+			logWriter.Flush();
+			logWriter.Close();
+        }
 
         private void Load(On.HeroController.orig_Start orig, HeroController self)
         {
@@ -68,7 +74,7 @@ namespace CustomImage {
 			USceneManager.activeSceneChanged -= ChangeSpriteInScene;
 			ModHooks.ObjectPoolSpawnHook -= ChangeSprite;
 			On.HeroController.Start -= Load;
-
+			ModHooks.BeforeSavegameSaveHook -= CloseWriter;
 			ModHooks.SlashHitHook -= RecordGO;
 
 			logFile.Close();
@@ -114,17 +120,34 @@ namespace CustomImage {
 					if (renderer != null) {
 						renderer.sprite = MakeSprite(texture, renderer.sprite.pixelsPerUnit);
 					}
-					BossStatue bossStatue = go.GetComponent<BossStatue>();
-					if (bossStatue != null)
-					{
-						GameObject statue = bossStatue.statueDisplay;
-						SpriteRenderer alt=statue.GetComponentInChildren<SpriteRenderer>();
-						alt.sprite = MakeSprite(texture, alt.sprite.pixelsPerUnit);
-					}
+                    
+					
 				}
 
 				LogDebug($"Changed {go.name} Sprite in scene {go.scene.name}");
 			}
+				BossStatue bossStatue = go.GetComponent<BossStatue>();
+				if (bossStatue != null)
+				{
+					GameObject statue = bossStatue.statueDisplay;
+					SpriteRenderer alt = statue.GetComponentInChildren<SpriteRenderer>();
+				if (texture != null)
+				{
+					alt.sprite = MakeSprite(texture, alt.sprite.pixelsPerUnit);
+				}
+					Texture2D alttex = textureDict
+				.Where(pair => go.name.StartsWith(pair.Key.Replace("-alt",""))&&pair.Key.Contains("-alt"))                 
+				.FirstOrDefault()
+				.Value;
+				if (alttex != null)
+					{
+						GameObject altstatue = bossStatue.statueDisplayAlt;
+						SpriteRenderer altspriteRenderer = altstatue.GetComponentInChildren<SpriteRenderer>();
+						altspriteRenderer.sprite = MakeSprite(alttex, altspriteRenderer.sprite.pixelsPerUnit);
+					}
+				
+				}
+			
 
 			return go;
 		}
