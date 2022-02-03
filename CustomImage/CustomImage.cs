@@ -27,7 +27,7 @@ namespace CustomImage {
 		private StreamWriter logWriter;
 
 
-		public override string GetVersion() => "1.5";
+		public override string GetVersion() => "1.5.2";
 
 		public override void Initialize() {
 			if (Instance != null) {
@@ -113,6 +113,13 @@ namespace CustomImage {
 
 					if (renderer != null) {
 						renderer.sprite = MakeSprite(texture, renderer.sprite.pixelsPerUnit);
+					}
+					BossStatue bossStatue = go.GetComponent<BossStatue>();
+					if (bossStatue != null)
+					{
+						GameObject statue = bossStatue.statueDisplay;
+						SpriteRenderer alt=statue.GetComponentInChildren<SpriteRenderer>();
+						alt.sprite = MakeSprite(texture, alt.sprite.pixelsPerUnit);
 					}
 				}
 
