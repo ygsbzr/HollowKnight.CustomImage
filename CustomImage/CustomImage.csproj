@@ -42,6 +42,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(HKModdingapi)PlayMaker.dll</HintPath>
     </Reference>
+    <Reference Include="Satchel-v0.7.5">
+      <HintPath>..\..\1.5Moddingapi\Satchel-v0.7.5.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -66,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomImage.cs" />
+    <Compile Include="Extension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

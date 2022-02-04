@@ -4,12 +4,12 @@ using System.Linq;
 using System.Reflection;
 
 using Modding;
-
+using Satchel;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using USceneManager = UnityEngine.SceneManagement.SceneManager;
-
+using UObject = UnityEngine.Object;
 namespace CustomImage {
 	public class CustomImage : Mod, ITogglableMod {
 		public static CustomImage Instance { get; private set; }
@@ -27,7 +27,7 @@ namespace CustomImage {
 		private StreamWriter logWriter;
 
 
-		public override string GetVersion() => "1.5.2";
+		public override string GetVersion() => "1.5.4";
 
 		public override void Initialize() {
 			if (Instance != null) {
@@ -67,7 +67,7 @@ namespace CustomImage {
         {
 			LoadAsset();
 			orig(self);
-        }
+		}
 
         public void Unload() {
 
@@ -151,11 +151,48 @@ namespace CustomImage {
 
 			return go;
 		}
+		private void ChangeSpriteInJournal()
+        {
+			GameObject Journallist = GameObject.Find("_GameCameras").FindGameObjectInChildren("HudCamera").FindGameObjectInChildren("Inventory").FindGameObjectInChildren("Journal").FindGameObjectInChildren("Enemy List");
+			foreach(GameObject Journal in Journallist.GetAllGameobjectsInChildren())
+            {
+				Texture2D texturefull = textureDict
+				.Where(pair => Journal.name.StartsWith(pair.Key.Replace("-icon",""))&&!pair.Key.Contains("-icon"))
+				.FirstOrDefault()
+				.Value;
+				Texture2D textureicon = textureDict
+				.Where(pair => Journal.name.StartsWith(pair.Key.Replace("-icon", "")) && pair.Key.Contains("-icon"))
+				.FirstOrDefault()
+				.Value;
+				if(texturefull != null)
+                {
+					JournalEntryStats journalEntry = Journal.GetComponent<JournalEntryStats>();
+					if(journalEntry != null)
+					journalEntry.sprite = MakeSprite(texturefull, journalEntry.sprite.pixelsPerUnit);
+					LogDebug($"Change Sprite of{Journal.name} in Journal");
+				}
+				if(textureicon != null)
+                {
+					GameObject Portrait = Journal.FindGameObjectInChildren("Portrait");
+					if(Portrait != null)
+                    {
+						SpriteRenderer iconsprite=Portrait.GetComponent<SpriteRenderer>();
+						if(iconsprite != null)
+                        {
+							iconsprite.sprite = MakeSprite(textureicon, iconsprite.sprite.pixelsPerUnit);
+                        }
+						LogDebug($"Change iconSprite of{Journal.name} in Journal");
+					}
+                }
 
+			}
+		}
 		private void ChangeSpriteInScene(Scene prev, Scene next) {
 			foreach (GameObject go in Object.FindObjectsOfType<GameObject>()) {
 				ChangeSprite(go);
 			}
+			ChangeSpriteInJournal();
+
 		}
 
 		private Sprite MakeSprite(Texture2D tex, float ppu) =>
