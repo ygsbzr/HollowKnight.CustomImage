@@ -27,7 +27,7 @@ namespace CustomImage {
 		private StreamWriter logWriter;
 
 
-		public override string GetVersion() => "1.5.4";
+		public override string GetVersion() => "1.5.6";
 
 		public override void Initialize() {
 			if (Instance != null) {
@@ -110,23 +110,72 @@ namespace CustomImage {
 				.FirstOrDefault()
 				.Value;
 
-			if (texture != null) {
+			if (go.name.StartsWith("Grub Bottle"))
+			{
+				Texture2D bottleTex = textureDict["Grub Bottle"];
+				GameObject grub = go.FindGameObjectInChildren("Grub");
+				if (grub != null)
+				{
+					Texture2D grubTex = textureDict["Grub"];
+					if (grubTex != null)
+					{
+						tk2dSprite tkSprite = go.GetComponent<tk2dSprite>();
+						if (tkSprite != null)
+						{
+							tkSprite.GetCurrentSpriteDef().material.mainTexture = grubTex;
+						}
+					}
+				}
+				SpriteRenderer renderer = go.GetComponent<SpriteRenderer>();
+
+				if (renderer != null&&bottleTex!=null)
+				{
+					renderer.sprite = MakeSprite(bottleTex, renderer.sprite.pixelsPerUnit);
+				}
+				return go;
+
+			}
+			if(go.name.StartsWith("Grub Mimic Top"))
+            {
+				Texture2D bottleTex = textureDict["Grub Bottle"];
+				GameObject minic = go.FindGameObjectInChildren("Grub Mimic 1");
+				if (minic != null)
+				{
+					Texture2D minicTex = textureDict["Minic"];
+					if (minicTex != null)
+					{
+						tk2dSprite tkSprite = go.GetComponent<tk2dSprite>();
+						if (tkSprite != null)
+						{
+							tkSprite.GetCurrentSpriteDef().material.mainTexture = minicTex;
+						}
+					}
+				}
+				
+				return go;
+			}
+			if (texture != null)
+			{
 				tk2dSprite tkSprite = go.GetComponent<tk2dSprite>();
-				if (tkSprite != null) {
+				if (tkSprite != null)
+				{
 					tkSprite.GetCurrentSpriteDef().material.mainTexture = texture;
-				} else {
+				}
+				else
+				{
 					SpriteRenderer renderer = go.GetComponent<SpriteRenderer>();
 
-					if (renderer != null) {
+					if (renderer != null)
+					{
 						renderer.sprite = MakeSprite(texture, renderer.sprite.pixelsPerUnit);
 					}
-                    
-					
+
+
 				}
 
 				LogDebug($"Changed {go.name} Sprite in scene {go.scene.name}");
 			}
-				BossStatue bossStatue = go.GetComponent<BossStatue>();
+			BossStatue bossStatue = go.GetComponent<BossStatue>();
 				if (bossStatue != null)
 				{
 					GameObject statue = bossStatue.statueDisplay;
@@ -187,11 +236,106 @@ namespace CustomImage {
 
 			}
 		}
+		private void ChangeSpriteInEquip()
+        {
+			GameObject Inv = GameObject.Find("_GameCameras").FindGameObjectInChildren("HudCamera").FindGameObjectInChildren("Inventory").FindGameObjectInChildren("Inv");
+			GameObject Equipment = Inv.FindGameObjectInChildren("Equipment");
+			GameObject InvItems = Inv.FindGameObjectInChildren("Inv_Items");
+			foreach(var item in Equipment.GetAllGameobjectsInChildren())
+            {
+				Texture2D itemTex = textureDict
+				.Where(pair => item.name.StartsWith(pair.Key.Replace("-equip", "")) && pair.Key.Contains("-equip"))
+				.FirstOrDefault()
+				.Value;
+				if(itemTex != null)
+                {
+					SpriteRenderer itemsprite=item.GetComponent<SpriteRenderer>();
+					if (itemsprite != null)
+                    {
+						itemsprite.sprite=MakeSprite(itemTex, itemsprite.sprite.pixelsPerUnit);
+                    }
+					LogDebug($"Change Equipment sprite of{item.name}");
+                }
+			}
+			foreach(var item in InvItems.GetAllGameobjectsInChildren())
+            {
+				if(item.name.Equals("Nail"))
+                {
+					InvNailSprite nailSprite = item.GetComponent<InvNailSprite>();
+					Texture2D NailTex1 = textureDict
+				.Where(pair => item.name.StartsWith(pair.Key.Replace("-item_0", "")) && pair.Key.Contains("-item_0"))
+				.FirstOrDefault()
+				.Value;
+					if(NailTex1 != null)
+                    {
+						nailSprite.level1 = MakeSprite(NailTex1, nailSprite.level1.pixelsPerUnit);
+                    }
+					Texture2D NailTex2 = textureDict
+				.Where(pair => item.name.StartsWith(pair.Key.Replace("-item_1", "")) && pair.Key.Contains("-item_1"))
+				.FirstOrDefault()
+				.Value;
+					if (NailTex2 != null)
+					{
+						nailSprite.level2 = MakeSprite(NailTex2, nailSprite.level2.pixelsPerUnit);
+					}
+					Texture2D NailTex3 = textureDict
+				.Where(pair => item.name.StartsWith(pair.Key.Replace("-item_2", "")) && pair.Key.Contains("-item_2"))
+				.FirstOrDefault()
+				.Value;
+					if (NailTex3 != null)
+					{
+						nailSprite.level3 = MakeSprite(NailTex3, nailSprite.level3.pixelsPerUnit);
+					}
+					Texture2D NailTex4 = textureDict
+				.Where(pair => item.name.StartsWith(pair.Key.Replace("-item_3", "")) && pair.Key.Contains("-item_3"))
+				.FirstOrDefault()
+				.Value;
+					if (NailTex4 != null)
+					{
+						nailSprite.level4 = MakeSprite(NailTex4, nailSprite.level4.pixelsPerUnit);
+					}
+					Texture2D NailTex5 = textureDict
+				.Where(pair => item.name.StartsWith(pair.Key.Replace("-item_5", "")) && pair.Key.Contains("-item_5"))
+				.FirstOrDefault()
+				.Value;
+					if (NailTex5 != null)
+					{
+						nailSprite.level5 = MakeSprite(NailTex5, nailSprite.level5.pixelsPerUnit);
+					}
+				}
+                else
+                {
+					Texture2D ItemTex = textureDict
+				.Where(pair => item.name.StartsWith(pair.Key.Replace("-item", "")) && pair.Key.EndsWith("-item"))
+				.FirstOrDefault()
+				.Value;
+					InvItemDisplay itemDisplay=item.GetComponent<InvItemDisplay>();
+					if(ItemTex != null)
+                    {
+						if(itemDisplay != null)
+                        {
+							itemDisplay.activeSprite = MakeSprite(ItemTex, itemDisplay.activeSprite.pixelsPerUnit);
+                        }
+                        else
+                        {
+							SpriteRenderer sprite=item.GetComponent<SpriteRenderer>();
+							if(sprite != null)
+                            {
+								sprite.sprite=MakeSprite(ItemTex, sprite.sprite.pixelsPerUnit);
+                            }
+                        }
+                    }
+                }
+				
+			}
+
+		}
 		private void ChangeSpriteInScene(Scene prev, Scene next) {
 			foreach (GameObject go in Object.FindObjectsOfType<GameObject>()) {
 				ChangeSprite(go);
 			}
 			ChangeSpriteInJournal();
+			ChangeSpriteInEquip();
 
 		}
 
