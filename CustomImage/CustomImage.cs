@@ -124,11 +124,11 @@ namespace CustomImage {
 
 			if (go.name.StartsWith("Grub Bottle"))
 			{
-				Texture2D bottleTex = textureDict["Grub Bottle"];
+				Texture2D bottleTex = textureDict.Where(pair => pair.Key.Equals("Grub Bottle-bottle")).FirstOrDefault().Value;
 				GameObject grub = go.FindGameObjectInChildren("Grub");
 				if (grub != null)
 				{
-					Texture2D grubTex = textureDict["Grub"];
+					Texture2D grubTex = textureDict.Where(pair => pair.Key.Equals("Grub Bottle-grub")).FirstOrDefault().Value;
 					if (grubTex != null)
 					{
 						tk2dSprite tkSprite = go.GetComponent<tk2dSprite>();
@@ -139,7 +139,6 @@ namespace CustomImage {
 					}
 				}
 				SpriteRenderer renderer = go.GetComponent<SpriteRenderer>();
-
 				if (renderer != null&&bottleTex!=null)
 				{
 					renderer.sprite = MakeSprite(bottleTex, renderer.sprite.pixelsPerUnit);
@@ -147,25 +146,9 @@ namespace CustomImage {
 				return go;
 
 			}
-			if(go.name.StartsWith("Grub Mimic Top"))
-            {
-				Texture2D bottleTex = textureDict["Grub Bottle"];
-				GameObject minic = go.FindGameObjectInChildren("Grub Mimic 1");
-				if (minic != null)
-				{
-					Texture2D minicTex = textureDict["Minic"];
-					if (minicTex != null)
-					{
-						tk2dSprite tkSprite = go.GetComponent<tk2dSprite>();
-						if (tkSprite != null)
-						{
-							tkSprite.GetCurrentSpriteDef().material.mainTexture = minicTex;
-						}
-					}
-				}
 				
 				return go;
-			}
+			
 			if (texture != null)
 			{
 				tk2dSprite tkSprite = go.GetComponent<tk2dSprite>();
