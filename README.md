@@ -4,9 +4,9 @@ A Hollow Knight Mod can change some sprites(for1.5.78)，need Satchel
 1. Install the mod
 2. Have `.png` image files
 3. Run the game once and use nail to hit what you want to change
-    1. This generates a folder in `Mods` named `CustomImage`.
+    1. This generates a folder in Location where CustomImage installed named `CustomImage`.
 4. Exit the game
-5. Go to the `CustomImage` folder
+5. Go to the `CustomImage` folder,and create a folder by yourself.(Yeah, like Custom Knight)
 6. Move the image files here and rename them as `<gamobjectname>.png`
 7. Start the game
 8. if the sprite does not change ,click the `refresh image` button in mod menu.

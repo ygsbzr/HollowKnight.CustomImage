@@ -9,23 +9,35 @@ using UObject = UnityEngine.Object;
 using UnityEngine.UI;
 
 namespace CustomImage {
-	public class CustomImage : Mod, ITogglableMod,ICustomMenuMod {
+	public class CustomImage : Mod, ITogglableMod,ICustomMenuMod,IGlobalSettings<GlobalSetting> {
 		public static CustomImage? Instance { get; private set; }
 
 
 		private readonly Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
 
 		public static readonly string assetPath = Path.Combine(
-			Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
-			"Mods",
-			"CustomImage"
+			Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"CustomImage"
 		);
+		public static GlobalSetting globalSettings = new();
+		public static string SkinPath
+        {
+            get
+            {
+				return Path.Combine(assetPath, CustomImage.Instance.CurrentSkin.GetId());
+            }
+        }
 		public bool ToggleButtonInsideMenu => true;
 		public MenuScreen GetMenuScreen(MenuScreen lastmenu,ModToggleDelegates? modToggle)
         {
 			return ModMenu.GetMenu(lastmenu, modToggle);
         }
-		public override string GetVersion() => "1.5.8";
+		public void OnLoadGlobal(GlobalSetting s) => globalSettings = s;
+		public GlobalSetting OnSaveGlobal()
+        {
+			globalSettings.CurrentSkin = CurrentSkin.GetId();
+			return globalSettings;
+        }
+		public override string GetVersion() => "1.6.0";
 
 		public override void Initialize() {
 			if (Instance != null) {
@@ -39,11 +51,16 @@ namespace CustomImage {
 				LogDebug("The CustomImage folder does not exist, creating");
 				Directory.CreateDirectory(assetPath);
 			}
+			if (!Directory.Exists(Path.Combine(assetPath,"Default")))
+			{
+				LogDebug("The CustomImage Default folder does not exist, creating");
+				Directory.CreateDirectory(Path.Combine(assetPath,"Default"));
+			}
+			GetSkinList();
 
-			
 
 
-            On.HeroController.Start += Load;
+			On.HeroController.Start += Load;
 			USceneManager.activeSceneChanged += ChangeSpriteInScene;
 			ModHooks.ObjectPoolSpawnHook += ChangeSprite;
 			GameManager.instance.StartCoroutine(WaitForTitle());
@@ -87,7 +104,8 @@ namespace CustomImage {
 		}
 
 		public void LoadAsset() {
-			foreach (string file in Directory.GetFiles(assetPath, "*.png")) {
+			textureDict.Clear();
+			foreach (string file in Directory.GetFiles(SkinPath, "*.png")) {
 				string filename = Path.GetFileNameWithoutExtension(file);
 				textureDict[filename] = LoadTexture2D(file);
 
@@ -409,10 +427,24 @@ namespace CustomImage {
 			ChangeSpriteInEquip();
 
 		}
-
+		internal static void GetSkinList()
+		{
+			var dicts = Directory.GetDirectories(assetPath);
+			SkinList = new();
+			for (int i = 0; i < dicts.Length; i++)
+			{
+				string directoryname = new DirectoryInfo(dicts[i]).Name;
+				SkinList.Add(new CIlist(directoryname));
+			}
+			CustomImage.Instance.CurrentSkin = ModMenu.GetSkinById(globalSettings.CurrentSkin);
+			Modding.Logger.Log("Load Skinslist");
+		}
 		private Sprite MakeSprite(Texture2D tex, float ppu) =>
 			Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), ppu);
+		public static List<ISelectableSkin>? SkinList;
+		public ISelectableSkin? CurrentSkin;
+		public ISelectableSkin? DefaultSkin;
 
-		
+
 	}
 }
