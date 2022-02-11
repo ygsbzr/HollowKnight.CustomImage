@@ -147,7 +147,6 @@ namespace CustomImage {
 
 			}
 				
-				return go;
 			
 			if (texture != null)
 			{
