@@ -1,0 +1,12 @@
+{
+  "Refresh Image": "重载图片",
+  "Custom Image": "自定义贴图",
+  "Mod Switch": "mod开关",
+  "Open or Close": "开/关",
+  "On": "开",
+  "Off": "关",
+  "Reload your image": "重新加载文件夹内贴图",
+  "Start Record": "开始记录击中物品名",
+  "Record what gameobject you hit by nail,write to objectlist.txt": "记录下你用骨钉击中的游戏物品名，并写入objectlist.txt",
+  "End Record": "结束记录"
+}
