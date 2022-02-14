@@ -1,7 +1,4 @@
 ﻿using Satchel.BetterMenus;
-using Modding;
-using System.Reflection;
-
 namespace CustomImage
 {
     ////Thank CutomKnight menu example:https://github.com/PrashantMohta/HollowKnight.CustomKnight/blob/moreskin/CustomKnight/Menu/BetterMenu.cs
@@ -11,11 +8,6 @@ namespace CustomImage
         private static StreamWriter? logWriter;
         internal static Menu? MenuRef;
         public static int selectedSkin = 0;
-        private static readonly string assetPath = Path.Combine(
-            Path.GetDirectoryName(Assembly.GetCallingAssembly().Location),
-            "Mods",
-            "CustomImage"
-        );
         public static MenuScreen GetMenu(MenuScreen lastmenu,ModToggleDelegates? toggleDelegates)
         {
             if(MenuRef==null)
@@ -25,9 +17,9 @@ namespace CustomImage
                 {
 
 
-                    if (CustomImage.Instance.CurrentSkin != null)
+                    if (CustomImage.CurrentSkin != null)
                     {
-                        ModMenu.SelectedSkin(CustomImage.Instance.CurrentSkin.GetId());
+                        ModMenu.SelectedSkin(CustomImage.CurrentSkin.GetId());
                     }
                 };
             }
@@ -115,17 +107,17 @@ namespace CustomImage
         }
         public static ISelectableSkin GetDefaultSkin()
         {
-            if (CustomImage.Instance.DefaultSkin == null)
+            if (CustomImage.DefaultSkin == null)
             {
-                CustomImage.Instance.DefaultSkin = GetSkinById("Default");
+                CustomImage.DefaultSkin = GetSkinById("Default");
             }
-            return CustomImage.Instance.DefaultSkin;
+            return CustomImage.DefaultSkin;
         }
         public static void SetSkinById(string id)
         {
             var Skin = GetSkinById(id);
-            if (CustomImage.Instance.CurrentSkin.GetId() == Skin.GetId()) { return; }
-            CustomImage.Instance.CurrentSkin = Skin;
+            if (CustomImage.CurrentSkin.GetId() == Skin.GetId()) { return; }
+            CustomImage.CurrentSkin = Skin;
         }
     }
 }

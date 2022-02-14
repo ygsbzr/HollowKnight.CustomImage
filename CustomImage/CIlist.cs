@@ -46,7 +46,7 @@ namespace CustomImage
         {
             return skinName.Length <= length ? skinName : skinName.Substring(0, length - 3) + "...";
         }
-        internal static MenuButton ApplySkinButton(int index)
+        internal static Satchel.BetterMenus.MenuButton ApplySkinButton(int index)
         {
 
             var ButtonText = MaxLength(CustomImage.SkinList[index].GetName(), CustomImage.globalSettings.NameLength);
