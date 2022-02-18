@@ -66,7 +66,7 @@ namespace CustomImage {
 
         public IEnumerator ChangeSpriteInScene()
         {
-			yield return new WaitForSceneLoadFinish();
+			yield return new WaitForSeconds(1f);
 			var scenes = SceneUtils.GetAllLoadedScenes();
 			foreach (var scene in scenes)
 			{
