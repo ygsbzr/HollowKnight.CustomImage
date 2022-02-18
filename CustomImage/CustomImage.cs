@@ -52,12 +52,35 @@ namespace CustomImage {
 
 
 			On.HeroController.Start += Load;
-			USceneManager.activeSceneChanged += ChangeSpriteInScene;
+            On.GameManager.BeginScene += TriggerScene;
 			ModHooks.ObjectPoolSpawnHook += ChangeSprite;
 			GameManager.instance.StartCoroutine(WaitForTitle());
 			
 		}
-		private IEnumerator WaitForTitle()
+
+        private void TriggerScene(On.GameManager.orig_BeginScene orig, GameManager self)
+        {
+			orig(self);
+			GameManager.instance.StartCoroutine(ChangeSpriteInScene());
+        }
+
+        public IEnumerator ChangeSpriteInScene()
+        {
+			yield return new WaitForSceneLoadFinish();
+			var scenes = SceneUtils.GetAllLoadedScenes();
+			foreach (var scene in scenes)
+			{
+				foreach (var go in scene.GetAllGameObjects())
+				{
+					ChangeSprite(go);
+				}
+			}
+			ChangeSpriteInJournal();
+			ChangeSpriteInEquip();
+		}
+
+
+        private IEnumerator WaitForTitle()
         {
 			yield return new WaitUntil(() => GameObject.Find("LogoTitle") != null);
             UIManager.EditMenus += EditText;
@@ -82,10 +105,10 @@ namespace CustomImage {
 
         public void Unload() {
 
-			USceneManager.activeSceneChanged -= ChangeSpriteInScene;
 			ModHooks.ObjectPoolSpawnHook -= ChangeSprite;
 			On.HeroController.Start -= Load;
-			
+			On.GameManager.BeginScene -= TriggerScene;
+
 		}
 
 		private Texture2D LoadTexture2D(string path) {
@@ -99,7 +122,6 @@ namespace CustomImage {
 			foreach (string file in Directory.GetFiles(SkinPath, "*.png")) {
 				string filename = Path.GetFileNameWithoutExtension(file);
 				textureDict[filename] = LoadTexture2D(file);
-
 				LogDebug("Loaded " + filename);
 			}
 
@@ -186,15 +208,6 @@ namespace CustomImage {
 			return go;
 		}
 		
-		
-		private void ChangeSpriteInScene(Scene prev, Scene next) {
-			foreach (GameObject go in UObject.FindObjectsOfType<GameObject>()) {
-				ChangeSprite(go);
-			}
-			ChangeSpriteInJournal();
-			ChangeSpriteInEquip();
-
-		}
 		internal static void GetSkinList()
 		{
 			var dicts = Directory.GetDirectories(assetPath);

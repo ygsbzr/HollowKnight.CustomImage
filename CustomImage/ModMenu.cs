@@ -74,8 +74,7 @@ namespace CustomImage
                 var skinToApply = CustomImage.SkinList[selectedSkin];
                 ModMenu.SetSkinById(skinToApply.GetId());
                 CustomImage.Instance.LoadAsset();
-                CustomImage.Instance.ChangeSpriteInEquip();
-                CustomImage.Instance.ChangeSpriteInJournal();
+                GameManager.instance.StartCoroutine(CustomImage.Instance.ChangeSpriteInScene());
             }
         }
         /*private static void CreateWriter()
