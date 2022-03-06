@@ -3,11 +3,11 @@ A Hollow Knight Mod can change some sprites(for1.5.78)，need Satchel
 ## Adding custom Image
 1. Install the mod
 2. Have `.png` image files
-3. Run the game once and use nail to hit what you want to change
+3. Run the game once
     1. This generates a folder in Location where CustomImage installed named `CustomImage`.
 4. Exit the game
 5. Go to the `CustomImage` folder,and create a folder by yourself.(Yeah, like Custom Knight)
-6. Move the image files here and rename them as `<gamobjectname>.png`
+6. Move the image files here and rename them as `<gameobjectname>.png`
 7. Start the game
 8. if the sprite does not change ,click the `refresh image` button in mod menu.
 9. for bossstatue,rename the image as `GG_Statue_<bossname>.png`,for some altbossstatue(like Nosk Hornet),rename the image as `GG_Statue_<bossname>-alt.png`
