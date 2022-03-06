@@ -65,7 +65,7 @@ namespace CustomImage {
 					return "Satchel not found";
                 else
                 {
-					return "v1.6.2";
+					return "v1.6.5";
                 }
             }
         }
