@@ -19,4 +19,6 @@ A Hollow Knight Mod can change some sprites(for1.5.78)，need Satchel
 15. For Soul Orb image in Equipment,rename image as `Soul Orb-item_(piecenumber).png`,for example,`Soul Orb-item_3.png` for full Vessel.
 16. For something has component `InvItemDisplay`(like dreamnail,Nail art), rename image as `<GameObjectname>-item_1.png`(activeSprite) or `<GameObjectname>-item_0.png`(inactiveSprite)
 16. For other InvItem, rename the image as `<GameObjectname>-item.png`. 
+## About CustomKnight
+**If you install CustomKnight**,move to image to `mods/CustomKnight/Skins/<skin>/Swap/CustomImage`directory
 

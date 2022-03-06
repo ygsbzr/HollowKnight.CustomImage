@@ -8,11 +8,15 @@
 	<Deterministic>true</Deterministic>
 	<ImplicitUsings>true</ImplicitUsings>
 	<Nullable>enable</Nullable>
+	<DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(HKModdingapi)Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
+    </Reference>
+    <Reference Include="CustomKnight">
+      <HintPath>..\..\1.5Moddingapi\CustomKnight.dll</HintPath>
     </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp">
       <HintPath>$(HKModdingapi)MMHOOK_Assembly-CSharp.dll</HintPath>
@@ -27,9 +31,8 @@
       <HintPath>$(HKModdingapi)PlayMaker.dll</HintPath>
 		<Private>false</Private>
     </Reference>
-    <Reference Include="Satchel-v0.7.5">
-      <HintPath>$(HKModdingapi)Satchel-v0.7.5.dll</HintPath>
-		<Private>false</Private>
+    <Reference Include="Satchel">
+      <HintPath>..\..\1.5Moddingapi\Satchel.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(HKModdingapi)UnityEngine.dll</HintPath>
@@ -42,6 +45,9 @@
     <Reference Include="UnityEngine.ImageConversionModule">
       <HintPath>$(HKModdingapi)UnityEngine.ImageConversionModule.dll</HintPath>
 		<Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\..\1.5Moddingapi\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.JSONSerializeModule">
       <HintPath>$(HKModdingapi)UnityEngine.JSONSerializeModule.dll</HintPath>

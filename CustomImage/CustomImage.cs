@@ -6,16 +6,26 @@ namespace CustomImage {
 
 		private readonly Dictionary<string, Texture2D> textureDict = new();
 
-		public static readonly string assetPath = Path.Combine(
+		public static  string assetPath = Path.Combine(
 			Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"CustomImage"
 		);
 		public static GlobalSetting globalSettings = new();
-		public static string SkinPath
+		public static bool CheckCK()
         {
-            get
+			return ModHooks.GetMod("CustomKnight") is Mod;
+        }
+		public static string SkinPath()
+        {	
+			return Path.Combine(assetPath, CurrentSkin.GetId());
+        }
+		public static string CKSkinPath()
+        {
+			if(!Directory.Exists(Path.Combine(SkinManager.GetCurrentSkin().getSwapperPath(), "Swap", "CustomImage")))
             {
-				return Path.Combine(assetPath, CurrentSkin.GetId());
+				Directory.CreateDirectory(Path.Combine(SkinManager.GetCurrentSkin().getSwapperPath(), "Swap", "CustomImage"));
+				Instance.LogDebug("Create CustomImage Folder");
             }
+			return Path.Combine(SkinManager.GetCurrentSkin().getSwapperPath(),"Swap","CustomImage");
         }
 		public bool ToggleButtonInsideMenu => true;
 		public MenuScreen GetMenuScreen(MenuScreen lastmenu,ModToggleDelegates? modToggle)
@@ -25,19 +35,55 @@ namespace CustomImage {
 		public void OnLoadGlobal(GlobalSetting s) => globalSettings = s;
 		public GlobalSetting OnSaveGlobal()
         {
-			globalSettings.CurrentSkin = CurrentSkin.GetId();
+			if(!CheckCK())
+            {
+				globalSettings.CurrentSkin = CurrentSkin.GetId();
+				return globalSettings;
+			}
+			globalSettings.CurrentSkin = SkinManager.GetCurrentSkin().GetId();
 			return globalSettings;
         }
-		public override string GetVersion() => "1.6.0";
+		private bool CheckSatchel()
+        {
+			bool Satchelinstall = false;
+            try
+            {
+				Satchel.AssemblyUtils.Version();
+				Satchelinstall = true;
+            }
+			catch (FileNotFoundException ex)
+            {
+				LogError(ex);
+            }
+			return Satchelinstall;
+        }
+		private string Version
+        {
+            get
+            {
+				if (!CheckSatchel())
+					return "Satchel not found";
+                else
+                {
+					return "v1.6.2";
+                }
+            }
+        }
+		public override string GetVersion() => Version;
 
+		public static bool HaveCK;
 		public override void Initialize() {
 			if (Instance != null) {
 				return;
 			}
 
 			Instance = this;
+			if(!CheckSatchel())
+            {
+				return;
+            }
 
-
+			
 			if (!Directory.Exists(assetPath)) {
 				LogDebug("The CustomImage folder does not exist, creating");
 				Directory.CreateDirectory(assetPath);
@@ -47,16 +93,18 @@ namespace CustomImage {
 				LogDebug("The CustomImage Default folder does not exist, creating");
 				Directory.CreateDirectory(Path.Combine(assetPath,"Default"));
 			}
+			if(CheckCK())
+            {
+				AddCKHandler();
+            }
 			GetSkinList();
-
-
-
 			On.HeroController.Start += Load;
             On.GameManager.BeginScene += TriggerScene;
 			ModHooks.ObjectPoolSpawnHook += ChangeSprite;
 			GameManager.instance.StartCoroutine(WaitForTitle());
 			
 		}
+
 
         private void TriggerScene(On.GameManager.orig_BeginScene orig, GameManager self)
         {
@@ -77,6 +125,7 @@ namespace CustomImage {
 			}
 			ChangeSpriteInJournal();
 			ChangeSpriteInEquip();
+			ChangeSpriteInLoad();
 		}
 
 
@@ -102,6 +151,20 @@ namespace CustomImage {
 			LoadAsset();
 			orig(self);
 		}
+		private void AddCKHandler()
+        {
+			if(HaveCK)
+            {
+                SkinManager.OnSetSkin += Refresh;
+            }
+        }
+
+        private void Refresh(object sender, EventArgs e)
+        {
+			textureDict.Clear();
+			LoadAsset();
+			GameManager.instance.StartCoroutine(ChangeSpriteInScene());
+        }
 
         public void Unload() {
 
@@ -118,8 +181,17 @@ namespace CustomImage {
 		}
 
 		public void LoadAsset() {
+			string skinpath;
+			if(CheckCK())
+            {
+				skinpath = CKSkinPath();
+            }
+            else
+            {
+				skinpath = SkinPath();
+            }
 			textureDict.Clear();
-			foreach (string file in Directory.GetFiles(SkinPath, "*.png")) {
+			foreach (string file in Directory.GetFiles(skinpath, "*.png")) {
 				string filename = Path.GetFileNameWithoutExtension(file);
 				textureDict[filename] = LoadTexture2D(file);
 				LogDebug("Loaded " + filename);
@@ -210,18 +282,23 @@ namespace CustomImage {
 		
 		internal static void GetSkinList()
 		{
-			var dicts = Directory.GetDirectories(assetPath);
-			SkinList = new();
-			for (int i = 0; i < dicts.Length; i++)
-			{
-				string directoryname = new DirectoryInfo(dicts[i]).Name;
-				SkinList.Add(new CIlist(directoryname));
+			if(!CheckCK())
+            {
+				var dicts = Directory.GetDirectories(assetPath);
+				SkinList = new();
+				for (int i = 0; i < dicts.Length; i++)
+				{
+					string directoryname = new DirectoryInfo(dicts[i]).Name;
+					SkinList.Add(new CIlist(directoryname));
+				}
+				CustomImage.CurrentSkin = ModMenu.GetSkinById(globalSettings.CurrentSkin);
+				Modding.Logger.Log("Load Skinslist");
 			}
-			CustomImage.CurrentSkin = ModMenu.GetSkinById(globalSettings.CurrentSkin);
-			Modding.Logger.Log("Load Skinslist");
+			
 		}
 		private Sprite MakeSprite(Texture2D tex, float ppu) =>
 			Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), ppu);
+		
 		public static List<ISelectableSkin>? SkinList;
 		public static ISelectableSkin? CurrentSkin;
 		public static ISelectableSkin? DefaultSkin;

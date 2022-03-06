@@ -12,18 +12,34 @@ namespace CustomImage
         {
             if(MenuRef==null)
             {
-                MenuRef = PrepareMenu((ModToggleDelegates)toggleDelegates);
-                MenuRef.OnBuilt += (_, Element) =>
+                if(!CustomImage.CheckCK())
                 {
-
-
-                    if (CustomImage.CurrentSkin != null)
+                    MenuRef = PrepareMenu((ModToggleDelegates)toggleDelegates);
+                    MenuRef.OnBuilt += (_, Element) =>
                     {
-                        ModMenu.SelectedSkin(CustomImage.CurrentSkin.GetId());
-                    }
-                };
+
+
+                        if (CustomImage.CurrentSkin != null)
+                        {
+                            ModMenu.SelectedSkin(CustomImage.CurrentSkin.GetId());
+                        }
+                    };
+                }
+                else
+                {
+                    MenuRef = PrepareMenuHaveCK();
+                }
+                
             }
             return MenuRef.GetMenuScreen(lastmenu);
+        }
+        public static Menu PrepareMenuHaveCK()
+        {
+            return new Menu("Custom Image".Localize(),new Element[]
+            {
+                new TextPanel("You install CustomKnight,Put images to CustomImage(Create by yourself) directory in Swap directory of skin you use ".Localize())
+            }
+            );
         }
         internal static string[] getSkinNameArray()
         {

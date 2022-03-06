@@ -6,3 +6,4 @@ global using UnityEngine.SceneManagement;
 global using System.Collections;
 global using USceneManager = UnityEngine.SceneManagement.SceneManager;
 global using UObject = UnityEngine.Object;
+global using CustomKnight;
