@@ -6,7 +6,7 @@ namespace CustomImage {
 
 		private readonly Dictionary<string, Texture2D> textureDict = new();
 
-		public static  string assetPath = Path.Combine(
+		public static readonly string assetPath = Path.Combine(
 			Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"CustomImage"
 		);
 		public static GlobalSetting globalSettings = new();
@@ -71,7 +71,6 @@ namespace CustomImage {
         }
 		public override string GetVersion() => Version;
 
-		public static bool HaveCK;
 		public override void Initialize() {
 			if (Instance != null) {
 				return;
@@ -153,7 +152,7 @@ namespace CustomImage {
 		}
 		private void AddCKHandler()
         {
-			if(HaveCK)
+			if(CheckCK())
             {
                 SkinManager.OnSetSkin += Refresh;
             }

@@ -37,7 +37,11 @@ namespace CustomImage
         {
             return new Menu("Custom Image".Localize(),new Element[]
             {
-                new TextPanel("You install CustomKnight,Put images to CustomImage(Create by yourself) directory in Swap directory of skin you use ".Localize())
+                new TextPanel("You install CustomKnight,Put images to CustomImage directory in Swap directory of skin you use".Localize()),
+                new MenuButton("Open CustomImage folder".Localize(), "", (_) =>
+                {
+                    IoUtils.OpenDefault(CustomImage.CKSkinPath());
+                })
             }
             );
         }
@@ -63,6 +67,10 @@ namespace CustomImage
                     },
                     Id:"ApplyButtonGroup"
                 ){ XDelta = 400f},
+                 new MenuButton("Open CustomImage folder".Localize(), "", (_) =>
+                {
+                    IoUtils.OpenDefault(CustomImage.assetPath);
+                })
                 /*new MenuButton("Start Record".Localize(), "Record what gameobject you hit by nail,write to objectlist.txt".Localize(), (mb) =>
                 {
                    CreateWriter();

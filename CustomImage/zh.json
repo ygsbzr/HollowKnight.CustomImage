@@ -13,5 +13,6 @@
   "Select a image directory": "选择一个贴图文件夹",
   "Select the directory to Apply": "选择一个文件夹以应用",
   "Applying image...": "少女折寿中...(",
-  "You install CustomKnight,Put images to CustomImage(Create by yourself) directory in Swap directory of skin you use ": "你已经安装了皮肤mod,把图片放入现在你用的皮肤的Swap文件夹的CustomImage文件夹里"
+  "You install CustomKnight,Put images to CustomImage directory in Swap directory of skin you use": "你已经安装了皮肤mod,把图片放入现在你用的皮肤的Swap文件夹的CustomImage文件夹里",
+  "Open CustomImage folder": "打开CustomImage文件夹"
 }
