@@ -20,5 +20,5 @@ A Hollow Knight Mod can change some sprites(for1.5.78)，need Satchel
 16. For something has component `InvItemDisplay`(like dreamnail,Nail art), rename image as `<GameObjectname>-item_1.png`(activeSprite) or `<GameObjectname>-item_0.png`(inactiveSprite)
 16. For other InvItem, rename the image as `<GameObjectname>-item.png`. 
 ## About CustomKnight
-**If you install CustomKnight**,move to image to `mods/CustomKnight/Skins/<skin>/Swap/CustomImage`directory
-
+**If you install CustomKnight**,move all image to `Mods/CustomKnight/Skins/<skin>/Swap/CustomImage`directory
+If you want to make a global swap,move all image to `Mods/CustomImage/Global`directory

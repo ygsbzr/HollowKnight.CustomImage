@@ -32,6 +32,12 @@ namespace CustomImage {
         {
 			return ModMenu.GetMenu(lastmenu, modToggle);
         }
+		public bool CheckGlobal()
+        {
+			if (Directory.GetFiles(Path.Combine(assetPath, "Global"),"*.png").Length > 0)
+				return true;
+			return false;
+        }
 		public void OnLoadGlobal(GlobalSetting s) => globalSettings = s;
 		public GlobalSetting OnSaveGlobal()
         {
@@ -65,7 +71,7 @@ namespace CustomImage {
 					return "Satchel not found";
                 else
                 {
-					return "v1.6.5";
+					return "v1.6.6";
                 }
             }
         }
@@ -92,7 +98,12 @@ namespace CustomImage {
 				LogDebug("The CustomImage Default folder does not exist, creating");
 				Directory.CreateDirectory(Path.Combine(assetPath,"Default"));
 			}
-			if(CheckCK())
+			if (!Directory.Exists(Path.Combine(assetPath, "Global")))
+			{
+				LogDebug("The CustomImage Global folder does not exist, creating");
+				Directory.CreateDirectory(Path.Combine(assetPath, "Global"));
+			}
+			if (CheckCK())
             {
 				AddCKHandler();
             }
@@ -181,10 +192,14 @@ namespace CustomImage {
 
 		public void LoadAsset() {
 			string skinpath;
-			if(CheckCK())
-            {
+			if (CheckCK() && !CheckGlobal())
+			{
 				skinpath = CKSkinPath();
-            }
+			}
+			else if (CheckCK())
+			{
+				skinpath = Path.Combine(assetPath, "Global");
+			}
             else
             {
 				skinpath = SkinPath();
@@ -281,8 +296,7 @@ namespace CustomImage {
 		
 		internal static void GetSkinList()
 		{
-			if(!CheckCK())
-            {
+			
 				var dicts = Directory.GetDirectories(assetPath);
 				SkinList = new();
 				for (int i = 0; i < dicts.Length; i++)
@@ -292,8 +306,6 @@ namespace CustomImage {
 				}
 				CustomImage.CurrentSkin = ModMenu.GetSkinById(globalSettings.CurrentSkin);
 				Modding.Logger.Log("Load Skinslist");
-			}
-			
 		}
 		private Sprite MakeSprite(Texture2D tex, float ppu) =>
 			Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), ppu);

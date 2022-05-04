@@ -126,4 +126,7 @@
       <CopyLocal>False</CopyLocal>
     </Reference>
   </ItemGroup>
+	<Target Name="CopyMod" AfterTargets="PostBuildEvent">
+		<Copy SourceFiles="$(TargetPath);$(TargetDir)$(TargetName).pdb" DestinationFolder="D:/Steamself/steamapps/common/Hollow Knight/hollow_knight_Data/Managed/Mods/$(TargetName)" SkipUnchangedFiles="true" />
+	</Target>
 </Project>

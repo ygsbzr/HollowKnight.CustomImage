@@ -41,6 +41,10 @@ namespace CustomImage
                 new MenuButton("Open CustomImage folder".Localize(), "", (_) =>
                 {
                     IoUtils.OpenDefault(CustomImage.CKSkinPath());
+                }),
+                new MenuButton("Open CustomImage Global Folder".Localize(), "", (_) =>
+                {
+                     IoUtils.OpenDefault(Path.Combine(CustomImage.assetPath,"Global"));
                 })
             }
             );
