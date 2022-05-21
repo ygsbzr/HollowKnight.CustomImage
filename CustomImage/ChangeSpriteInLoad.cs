@@ -5,7 +5,7 @@ namespace CustomImage
     {
         public void ChangeSpriteInLoad()
         {
-            GameObject LoadingCanvas = GameObject.Find("_UIManager").FindGameObjectInChildren("LoadingCanvas");
+           /* GameObject LoadingCanvas = UIManager.instance.gameObject.FindGameObjectInChildren("LoadingCanvas");
             if(LoadingCanvas != null)
             {
                 foreach(GameObject Spinner in LoadingCanvas.GetAllGameobjectsInChildren())
@@ -22,17 +22,17 @@ namespace CustomImage
                             if (checkpoint != null)
                             {
                                 Sprite[] start = ReflectionHelper.GetField<CheckpointSprite, Sprite[]>(checkpoint, "startSprites");
-                                ReflectionHelper.SetField(checkpoint, "startSprites", Extension.MakeOrigSpriteArray(start, textureicon,new(100f,100f)));
+                                ReflectionHelper.SetField(checkpoint, "startSprites", Extension.MakeOrigSpriteArray(start, textureicon));
                                 Sprite[] end = ReflectionHelper.GetField<CheckpointSprite, Sprite[]>(checkpoint, "endSprites");
-                                ReflectionHelper.SetField(checkpoint, "endSprites", Extension.MakeOrigSpriteArray(end,textureicon, new(100f, 100f)));
+                                ReflectionHelper.SetField(checkpoint, "endSprites", Extension.MakeOrigSpriteArray(end,textureicon));
                                 Sprite[] loop = ReflectionHelper.GetField<CheckpointSprite, Sprite[]>(checkpoint, "loopSprites");
-                                ReflectionHelper.SetField(checkpoint, "loopSprites", Extension.MakeOrigSpriteArray(loop, textureicon, new(100f, 100f)));
+                                ReflectionHelper.SetField(checkpoint, "loopSprites", Extension.MakeOrigSpriteArray(loop, textureicon));
                             }
                         }
+                      
                     }
                 }
-            }
+            }*/
         }
-        public static Sprite MakeOrigSprite(Texture2D origtex, Rect origrect,Vector2 origpv, float ppu) => Sprite.Create(origtex, origrect,origpv, ppu);
     }
 }

@@ -99,7 +99,7 @@ namespace CustomImage
 							nailSprite.level4 = MakeSprite(NailTex4, nailSprite.level4.pixelsPerUnit);
 						}
 						Texture2D NailTex5 = textureDict
-					.Where(pair => item.name.StartsWith(pair.Key.Replace("-item_5", "")) && pair.Key.Contains("-item_5"))
+					.Where(pair => item.name.StartsWith(pair.Key.Replace("-item_4", "")) && pair.Key.Contains("-item_4"))
 					.FirstOrDefault()
 					.Value;
 						if (NailTex5 != null)

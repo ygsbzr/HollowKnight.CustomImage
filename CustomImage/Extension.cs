@@ -19,15 +19,15 @@ namespace CustomImage
 
             return list;
         }
-        public static Sprite[] MakeOrigSpriteArray(Sprite[] origSprite,Texture2D origtex,Vector2 Piv)
+        /*public static Sprite[] MakeOrigSpriteArray(Sprite[] origSprite,Texture2D replacetex)
         {
             List<Sprite> list = new();
             foreach(Sprite sprite in origSprite)
             {
-                Sprite replacesprite = CustomImage.MakeOrigSprite(origtex, sprite.rect,Piv,sprite.pixelsPerUnit);
+                Sprite replacesprite = SpriteUtils.CreateSpriteFromTexture(SpriteUtils.ExtractTextureFromSpriteLegacy(sprite, replacetex));
                 list.Add(replacesprite);
             }
             return list.ToArray();
-        }
+        }*/
     }
 }

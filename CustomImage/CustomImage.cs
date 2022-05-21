@@ -1,4 +1,5 @@
 ﻿using UnityEngine.UI;
+using CustomKnight;
 namespace CustomImage {
 	public partial class CustomImage : Mod, ITogglableMod,ICustomMenuMod,IGlobalSettings<GlobalSetting> {
 		public static CustomImage? Instance { get; private set; }
@@ -115,6 +116,7 @@ namespace CustomImage {
 			
 		}
 
+       
 
         private void TriggerScene(On.GameManager.orig_BeginScene orig, GameManager self)
         {
